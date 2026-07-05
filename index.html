@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inspeção OQC - Label Code (teste)</title>
+<style>
+  :root{
+    --wine:#6B1F2E;
+    --wine-dark:#4A1520;
+    --bg:#F7F5F2;
+    --card:#FFFFFF;
+    --text:#2C2C2A;
+    --muted:#6B6A66;
+    --border:#DDD9D2;
+    --ok:#3B6D11;
+    --danger:#A32D2D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:16px;
+  }
+  .card{
+    max-width:520px;
+    margin:0 auto;
+    background:var(--card);
+    border-radius:12px;
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .header{
+    background:var(--wine);
+    color:#fff;
+    padding:20px 24px;
+  }
+  .header h1{
+    margin:0;
+    font-size:18px;
+    font-weight:600;
+  }
+  .header p{
+    margin:4px 0 0;
+    font-size:13px;
+    opacity:0.85;
+  }
+  .banner{
+    background:#FAEEDA;
+    color:#633806;
+    font-size:12px;
+    padding:8px 24px;
+    border-bottom:1px solid var(--border);
+  }
+  form{
+    padding:24px;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin:16px 0 6px;
+    color:var(--text);
+  }
+  label.first{margin-top:0;}
+  input, select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:15px;
+    font-family:inherit;
+    background:#fff;
+    color:var(--text);
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--wine);
+  }
+  textarea{resize:vertical; min-height:70px;}
+  .row2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .radio-group{
+    display:flex;
+    gap:10px;
+    margin-top:6px;
+  }
+  .radio-option{
+    flex:1;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+    text-align:center;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    transition:border-color .15s, background .15s;
+  }
+  .radio-option input{display:none;}
+  .radio-option.aprovado{color:var(--ok);}
+  .radio-option.reprovado{color:var(--danger);}
+  .radio-option.selected.aprovado{background:#EAF3DE; border-color:var(--ok);}
+  .radio-option.selected.reprovado{background:#FCEBEB; border-color:var(--danger);}
+  #motivoWrap{display:none;}
+  button{
+    width:100%;
+    margin-top:24px;
+    padding:14px;
+    background:var(--wine);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button:active{background:var(--wine-dark);}
+  button:disabled{opacity:0.6; cursor:not-allowed;}
+  .status{
+    margin-top:14px;
+    padding:12px;
+    border-radius:8px;
+    font-size:13px;
+    display:none;
+  }
+  .status.ok{display:block; background:#EAF3DE; color:var(--ok);}
+  .status.err{display:block; background:#FCEBEB; color:var(--danger);}
+  .hint{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <h1>Inspeção OQC</h1>
+    <p>Label Code · PROC 07 / PROC 15 · ISO 9001:2015 §8.6</p>
+  </div>
+
+  <div class="banner" id="modoTeste">
+    Modo teste: nenhuma URL de Power Automate configurada ainda. O envio vai aparecer só no console do navegador. Veja o comentário no início do arquivo para configurar.
+  </div>
+
+  <form id="formOQC">
+
+    <label class="first">Ordem de Produção (OP)</label>
+    <input type="text" id="op" placeholder="Ex: P020698-005" required>
+
+    <div class="row2">
+      <div>
+        <label>Cliente</label>
+        <input type="text" id="cliente" required>
+      </div>
+      <div>
+        <label>Produto / Código</label>
+        <input type="text" id="produto" required>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>Quantidade inspecionada</label>
+        <input type="number" id="quantidade" min="1" required>
+      </div>
+      <div>
+        <label>Turno</label>
+        <select id="turno" required>
+          <option value="">Selecione</option>
+          <option value="1">1º turno</option>
+          <option value="2">2º turno</option>
+          <option value="3">3º turno</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Inspetor</label>
+    <input type="text" id="inspetor" required>
+
+    <label>Resultado</label>
+    <div class="radio-group" id="resultadoGroup">
+      <label class="radio-option aprovado" data-value="Aprovado">
+        <input type="radio" name="resultado" value="Aprovado">
+        Aprovado
+      </label>
+      <label class="radio-option reprovado" data-value="Reprovado">
+        <input type="radio" name="resultado" value="Reprovado">
+        Reprovado
+      </label>
+    </div>
+
+    <div id="motivoWrap">
+      <label>Motivo da reprovação</label>
+      <input type="text" id="motivo" placeholder="Ex: desalinhamento de impressão">
+    </div>
+
+    <label>Observações</label>
+    <textarea id="observacoes" placeholder="Detalhes adicionais da inspeção"></textarea>
+
+    <button type="submit" id="btnEnviar">Enviar inspeção</button>
+
+    <div class="status" id="status"></div>
+  </form>
+</div>
+
+<script>
+/*
+  CONFIGURAÇÃO
+  =============
+  1. Crie o Flow no Power Automate com gatilho "Quando uma solicitação HTTP for recebida".
+  2. Copie a URL gerada pelo Flow e cole abaixo em POWER_AUTOMATE_URL.
+  3. No corpo esperado do gatilho (schema JSON), use a mesma estrutura do objeto "payload" logo abaixo.
+  4. Sem essa URL configurada, o formulário funciona em modo teste: os dados só aparecem
+     no console do navegador (F12 > Console), não são enviados a lugar nenhum.
+*/
+const POWER_AUTOMATE_URL = ""; // <-- cole aqui a URL do Flow
+
+const form = document.getElementById('formOQC');
+const statusEl = document.getElementById('status');
+const btnEnviar = document.getElementById('btnEnviar');
+const motivoWrap = document.getElementById('motivoWrap');
+const resultadoGroup = document.getElementById('resultadoGroup');
+
+if (POWER_AUTOMATE_URL) {
+  document.getElementById('modoTeste').style.display = 'none';
+}
+
+resultadoGroup.querySelectorAll('.radio-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    resultadoGroup.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    opt.querySelector('input').checked = true;
+    motivoWrap.style.display = opt.dataset.value === 'Reprovado' ? 'block' : 'none';
+  });
+});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const resultado = form.querySelector('input[name="resultado"]:checked');
+  if (!resultado) {
+    showStatus('err', 'Selecione o resultado da inspeção (Aprovado ou Reprovado).');
+    return;
+  }
+
+  const payload = {
+    op: document.getElementById('op').value,
+    cliente: document.getElementById('cliente').value,
+    produto: document.getElementById('produto').value,
+    quantidade: document.getElementById('quantidade').value,
+    turno: document.getElementById('turno').value,
+    inspetor: document.getElementById('inspetor').value,
+    resultado: resultado.value,
+    motivo: document.getElementById('motivo').value,
+    observacoes: document.getElementById('observacoes').value,
+    dataHora: new Date().toISOString()
+  };
+
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviando...';
+
+  if (!POWER_AUTOMATE_URL) {
+    console.log('Modo teste - payload que seria enviado:', payload);
+    await new Promise(r => setTimeout(r, 600));
+    showStatus('ok', 'Modo teste: dados exibidos no console (F12). Nenhum envio real foi feito.');
+    resetForm();
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar inspeção';
+    return;
+  }
+
+  try {
+    const resp = await fetch(POWER_AUTOMATE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (resp.ok) {
+      showStatus('ok', 'Inspeção enviada com sucesso.');
+      resetForm();
+    } else {
+      showStatus('err', 'Erro ao enviar (status ' + resp.status + '). Tente novamente.');
+    }
+  } catch (err) {
+    showStatus('err', 'Falha de conexão. Verifique a internet e tente novamente.');
+  } finally {
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Enviar inspeção';
+  }
+});
+
+function showStatus(type, msg) {
+  statusEl.className = 'status ' + type;
+  statusEl.textContent = msg;
+}
+
+function resetForm() {
+  form.reset();
+  resultadoGroup.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+  motivoWrap.style.display = 'none';
+}
+</script>
+
+</body>
+</html>
